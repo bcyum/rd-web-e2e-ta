@@ -1,0 +1,76 @@
+package com.rd.tests;
+
+import com.rd.drivers.Driver;
+import com.rd.utils.PropertyManager;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+
+public class xpathTest {
+
+    public static WebDriver driver;
+    Driver webDriver = new Driver();
+    PropertyManager propertyManager= new PropertyManager();
+    String url =propertyManager.getProperty("APP_URL");
+
+
+    @BeforeMethod(alwaysRun = true)
+    public void before() throws MalformedURLException {
+        driver = webDriver.initializeDriver();
+        driver.get(url);
+    }
+
+    // 1. ödev xpath ile düğme testi
+    @Test
+    public void clickPageTest() {
+        // "xPath seçici #login ile butona tıkla"
+        WebElement button = driver.findElement(By.xpath("//*[@id=\"login\"]"));
+        button.click();
+        // CSS selektörü kullanarak elementi bul
+        By xpathSelector = By.xpath("//*[@id=\"loginstatus\"]");
+        WebElement element = driver.findElement(xpathSelector);
+        // Elementin metnini al ve assert et
+        String expectedText = "Invalid username/password";
+        String actualText = element.getText();
+        Assert.assertEquals(actualText, expectedText, "Assert failed: Text does not match!");
+    }
+
+    // 2. ödev xpath
+    @Test
+    public void fillPageTest() {
+
+        // Text input username
+        //dynamic id maalesef her sayfa yüklemesinde değişiyormuş...  :(
+        By textInputSelector = By.xpath("//*[@id=\"0877e3d5-ed7e-cca7-8b41-5cf35b7cb7fa\"]");
+        WebElement textInput = driver.findElement(textInputSelector);
+        String inputText = "Bekir";
+        textInput.sendKeys(inputText);
+        // Text input password
+        By pwdInputSelector = By.xpath("//*[@id=\"d3ff6f06-444f-0281-7108-e43092a05d2e\"]");
+        WebElement pwdInput = driver.findElement(pwdInputSelector);
+        String inputPwd = "pwd";
+        pwdInput.sendKeys(inputPwd);
+        // "#login" xPath seçicisiyle belirlenen düğmeye tıkla
+        WebElement button = driver.findElement(By.xpath("//*[@id=\"login\"]"));
+        button.click();
+        // xPath selektörü kullanarak elementi bul
+        By xpathSelector = By.xpath("//*[@id=\"loginstatus\"]");
+        WebElement element = driver.findElement(xpathSelector);
+        // Elementin metnini al ve assert et
+        String expectedText = "Welcome, Bekir!";
+        String actualText = element.getText();
+        Assert.assertEquals(actualText, expectedText, "Assert failed: Text does not match!");
+    }
+
+
+    @AfterMethod(alwaysRun = true)
+    public void  after(){
+        webDriver.quitDriver();
+    }
+}
